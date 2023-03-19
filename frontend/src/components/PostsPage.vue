@@ -1,0 +1,89 @@
+<template>
+  <div class="container my-5 mx-5 row align-items-center">
+    <h4 class="col">My Posts</h4>
+    <button class="btn btn-success col-md-auto mb-2" v-on:click="createPost()">create Post</button>
+    <hr/>
+    <div v-if="posts.length">
+      <div v-for="post in posts" :key="post.Id">
+          <h5><u>{{post.Title}}</u></h5>
+            <p v-for="paragraph in post.Content" :key="paragraph.id">
+              {{paragraph}}
+            </p>
+            <p><u>Published on:</u> {{post.Date}}</p>
+            <p v-if="post.Date_m"><u>Date modified:</u> {{post.Date_m}}</p>
+            <button class="btn btn-danger mr-3" v-on:click="delPost(post.Id)">Delete Post</button>
+            <router-link :to="{name:'editpost',params:{id:post.Id}}" class="btn btn-warning mx-3">Update Post</router-link>
+        </div>
+      </div>
+    <div v-else>Pease create a post</div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+        return {
+            posts:[],
+        }
+    },
+    props:{
+    auth_id:{
+      type:[Number,String],
+      requried:true
+    },
+    post_id:{
+      type:[Number,String],
+      requried:true
+    }
+  },
+    methods:{
+        getAuthorPosts(){
+            fetch(`http://127.0.0.1:5000/author/post`,{
+                method:"GET",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Authentication_token":localStorage.getItem("auth_token")
+                }
+        })
+        .then(resp => resp.json())
+        .then(data =>{
+            this.posts.push(...data)
+      })
+        .catch( error => {
+            console.log(error)
+            })
+        },
+        delPost(post_id){
+      fetch(`http://127.0.0.1:5000/author/post/${post_id}/delete`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Authentication_token":localStorage.getItem("auth_token")
+        }
+      })
+      .then(resp => resp.json())
+      .then(()=>{
+        location.reload()
+            })
+      .catch(error => {
+            console.log(error)
+            })
+    },
+    createPost(){
+      this.$router.push({
+        name:'createposts'
+      })
+    },
+    },
+    created() {
+        this.getAuthorPosts()
+       }
+
+}
+</script>
+
+<style>
+
+</style>
