@@ -16,7 +16,6 @@
             <strong>{{ err }}</strong>
         </div>
     </div>
-  
 </template>
 
 <script>

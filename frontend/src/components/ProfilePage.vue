@@ -2,8 +2,9 @@
   <div class="container my-5 mx-5" >
     <h4>Profile page</h4>
     <hr/>
+    <!-- <img :src="thumbnailUrl" class="img-fluid "> -->
       <form @submit.prevent="uploadImage" enctype="multipart/form-data">
-        <input type="file" name="image">
+        <input type="file" ref="image">
         <button type="submit" class="btn btn-success my-2">Upload</button>
       </form>
         <h5><u>Userame:</u> {{author.Name}}</h5>
@@ -24,15 +25,20 @@ export default {
   data() {
     return{
       author:{},
+      propic:"tempic.png"
     }
   },
-  props:{
-    auth_id:{
-      type:[Number,String],
-      requried:true
+  // props:{
+  //   auth_id:{
+  //     type:[Number,String],
+  //     requried:true
+  //   }
+  // },
+  computed: {
+    thumbnailUrl() {
+      return this.propic ? URL.createObjectURL(this.propic) : 'tempic.png';
     }
   },
-
   methods:{
     getProfile(){
       fetch(`http://127.0.0.1:5000/author`,{
@@ -70,10 +76,46 @@ export default {
       .catch(error => {
             console.log(error)
             })
-    }
+    },
+    // uploadImage(){
+    //   this.propic = this.$refs.image
+    //   console.log(this.propic.files[0])
+
+    // },
+    // getImage(){
+    //   fetch(`http://127.0.0.1:5000/author/pic`,{
+    //     method:"GET",
+    //     headers:{
+    //       "responseType":"blob",
+    //       "Access-Control-Allow-Origin": "*",
+    //       "Authentication_token":localStorage.getItem("auth_token")
+    //     },
+    //   })
+    //   .then(response => {
+    //     response.json()
+    //     this.propic=this.convertToBlob(response.pic)
+    //     console.log(response)
+    //   })
+    //   .catch(error => {
+    //         console.log(error)
+    //         })
+
+    // },
+    // convertToBlob(base64Data) {
+    //   const byteCharacters = atob(base64Data);
+    //   const byteArrays = [];
+
+    //   for (let i = 0; i < byteCharacters.length; i++) {
+    //     byteArrays.push(byteCharacters.charCodeAt(i));
+    //   }
+
+    //   const blob = new Blob([new Uint8Array(byteArrays)], {type: 'image/jpeg'});
+    //   return blob;
+    // }
   },
   created() {
       this.getProfile()
+      // this.getImage()
     }
 
 }

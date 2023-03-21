@@ -10,12 +10,12 @@ roles_users = db.Table('roles_users',
 class Users(db.Model,UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True,autoincrement = True)
-    profile_pic = db.Column(db.LargeBinary,nullable = True)
     username = db.Column(db.String,nullable = False)
     email = db.Column(db.String,nullable = False,unique = True)
     password = db.Column(db.String,nullable = False)
     active = db.Column(db.Boolean())
     fs_uniquifier =db.Column(db.String(255),unique=True, nullable = False)
+    profile_pic = db.Column(db.LargeBinary,nullable = True)
     users_posts = db.relationship('Posts',backref = 'users',cascade = 'all,delete')
     roles = db.relationship('Role', secondary= roles_users, backref= db.backref('users'))
 #role -----------------

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container my-5 mx-5" >
   <nav class="navbar navbar-expand bg-body-primary">
   <div class="container">
     <router-link class="navbar-brand" to="/feed">Blog</router-link>

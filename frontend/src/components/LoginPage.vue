@@ -29,7 +29,6 @@ export default {
     },
     methods:{
       login(){ 
-        console.log(this.password)
         if(this.email||this.password){
                   fetch('http://127.0.0.1:5000/login?include_auth_token',{
                     method:"POST",

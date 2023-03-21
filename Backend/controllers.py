@@ -1,5 +1,7 @@
-from flask import Flask,request,jsonify,render_template,Response
+from flask import Flask,request,jsonify,send_file
 import datetime
+
+from io import BytesIO
 
 from sqlalchemy import null
 from models import *
@@ -8,23 +10,6 @@ from flask import current_app as app
 from flask_login import current_user
 
 import base64
-
-
-
-#Login and Logout ------------------------------------------------------------
-# @app.route('/login',methods=['GET','POST'])
-# def login():
-#     if request.method=='GET':
-#       return jsonify('Not Logged in')
-#     if request.method=='POST':
-#       return jsonify('Logged in succesfully')
-
-# @app.route('/logout',methods=['GET','POST'])
-# def logout():
-#     if request.method=='GET':
-#       return jsonify('Want to logout?')
-#     if request.method=='POST':
-#       return jsonify('Logged out succesfully')  
 
 
 #New Authhor ----------------------------------------------------------------
@@ -53,7 +38,6 @@ def get_id():
 # Author Actions ------------------------------------------------------------
 @app.route('/author',methods=['GET'])
 @auth_required("token")
-# @login_required
 def authors():
   user_id=current_user.id
   username=current_user.username
@@ -70,7 +54,17 @@ def authors():
 
 
 
+@app.route('/author/pic',methods=['GET','POST'])
+@auth_required("token")
+def authors_profile_pic():
+  user_id=current_user.id
+  username=current_user.username
+  if request.method == 'GET':
+    pic = base64.b64encode(Users.query.filter(Users.id==user_id).first().profile_pic).decode('utf-8')
+    print(pic)
+    return jsonify({"pic":pic})
 
+    
 
 @app.route('/author/profile/<id>',methods=['GET'])
 @auth_required("token")
