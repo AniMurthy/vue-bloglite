@@ -28,12 +28,6 @@ export default {
       propic:"tempic.png"
     }
   },
-  // props:{
-  //   auth_id:{
-  //     type:[Number,String],
-  //     requried:true
-  //   }
-  // },
   computed: {
     thumbnailUrl() {
       return this.propic ? URL.createObjectURL(this.propic) : 'tempic.png';

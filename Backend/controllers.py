@@ -11,6 +11,8 @@ from flask_login import current_user
 
 import base64
 
+from workers import *
+import tasks
 
 #New Authhor ----------------------------------------------------------------
 @app.route('/get_id',methods=['GET','POST'])
@@ -64,7 +66,17 @@ def authors_profile_pic():
     print(pic)
     return jsonify({"pic":pic})
 
-    
+
+@app.route('/jobs',methods=['GET','POST'])
+@auth_required("token")
+def jobs():
+  user_id=current_user.id
+  username=current_user.username
+  if request.method == 'GET':
+    job=tasks.sayHello.delay(username)
+    result = job.wait()
+    return str(result)
+
 
 @app.route('/author/profile/<id>',methods=['GET'])
 @auth_required("token")
