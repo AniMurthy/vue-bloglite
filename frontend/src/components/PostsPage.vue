@@ -1,12 +1,12 @@
 <template>
   <div class="container mx-5 my-5">
-  <h4 class="col">My Posts</h4>
+  <h4 >My Posts</h4>
   <hr/>
   <div v-if="this.token == null">
     <h5>Please Login First</h5>
     <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
     </div>
-    <div v-else class="container my-5 mx-5 row align-items-center">
+    <div v-else >
     
     <button class="btn btn-success col-md-auto mb-2" v-on:click="createPost()">create Post</button>
     
