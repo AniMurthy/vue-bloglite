@@ -7,9 +7,10 @@
     <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
     </div>
     <div v-else >
-    
-    <button class="btn btn-success col-md-auto mb-2" v-on:click="createPost()">create Post</button>
-    
+    <div class="row">
+    <button class="btn btn-success col-2 mb-2 mx-2" v-on:click="createPost()">create Post</button>
+    <!-- <button class="btn btn-info col-2 mb-2 mx-2" v-on:click="export()">Export Posts</button> -->
+    </div>
     
     <div v-if="posts.length">
       <div v-for="post in posts" :key="post.Id">
@@ -92,6 +93,19 @@ export default {
         name:'createposts'
       })
     },
+    // export(){
+    //   fetch(`http://127.0.0.1:5000/author/post`,{
+    //             method:"GET",
+    //             headers:{
+    //                 "Content-Type":"text/csv",
+    //                 "Access-Control-Allow-Origin": "*",
+    //                 "Authentication_token":localStorage.getItem("auth_token"),
+    //                 "Content-disposition":"attachment filename=userposts.csv"
+    //             }
+    //     })
+    //     .then(resp => resp.json)
+
+    // }
     },
     created() {
         this.getVal()

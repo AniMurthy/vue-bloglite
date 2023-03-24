@@ -1,6 +1,8 @@
 from flask import Flask,request,jsonify,send_file
 import datetime
 
+import flask_excel as excel
+
 from io import BytesIO
 
 from sqlalchemy import null
@@ -13,6 +15,8 @@ import base64
 
 from workers import *
 import tasks
+from template import *
+
 
 #New Authhor ----------------------------------------------------------------
 @app.route('/get_id',methods=['GET','POST'])
@@ -285,12 +289,55 @@ def posts_update(post_id):
 
 #celery jobs-------------------------------------------------------------------------------
 
-@app.route('/jobs',methods=['GET','POST'])
+@app.route('/DownloadCSV',methods=['GET','POST'])
 @auth_required("token")
-def jobs():
+def dwonloadcsv():
   user_id=current_user.id
   username=current_user.username
   if request.method == 'GET':
-    job=tasks.sayHello.delay(username)
-    result = job.wait()
-    return str(result)
+    # job=tasks.sayHello.delay(username)
+    # result = job.wait()
+    # return str(result)
+    post=Posts.query.filter(Posts.author_id==user_id).all()
+    author=Users.query.filter(Users.id==user_id).first()
+    if post:
+      result=[]
+      for i in range(len(post)):
+        author=Users.query.filter(Users.id==post[i].author_id).first()
+        paragraphs=[]
+        paragraphs=((post[i].content.split('\\n')))
+        result.append({"Title":post[i].title,"Content":paragraphs,"Date":post[i].date_created,"Date_m":post[i].date_modified,"post_d":post[i].id})
+    excel.init_excel(app)
+    extension_type = "csv"
+    filename = username + "." + extension_type
+    d = {'Author_id': user_id,
+         'Name': author.username,
+         'posts':result}
+    return excel.make_response_from_dict(d, file_type=extension_type, file_name=filename)
+
+
+@app.route('/report',methods=['GET','POST'])
+@auth_required("token")
+def pdf_report():
+  user_id=current_user.id
+  username=current_user.username
+  if request.method == 'GET':
+    post=Posts.query.filter(Posts.author_id==user_id).all()
+    posts=len(Posts.query.filter(Posts.author_id==user_id).all())
+    follow=len(Followers.query.filter(Followers.user_id==user_id).all())
+    following=len(Followers.query.filter(Followers.following_id==user_id).all())
+    data={}
+    data["id"]=user_id
+    data["username"]=username
+    data["followers_no"]=follow
+    data["following_no"]=following
+    data["no_posts"]=posts
+    result=[]
+    if post:
+      for i in range(len(post)):
+        paragraphs=[]
+        paragraphs=((post[i].content.split('\\n')))
+        result.append({"Title":post[i].title,"Content":paragraphs,"Date":post[i].date_created})
+    data["post"]=result
+    create_pdf(data,username)
+    return jsonify(data)
