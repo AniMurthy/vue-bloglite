@@ -2,6 +2,11 @@
   <div class="container mx-5 my-5">
     <h4>FEED</h4>
     <hr/>
+    <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else>
     <div v-if="posts.length">
         <div v-for="post in posts" :key="post.post_id">
         <h5><u>{{post.Title}}</u></h5>
@@ -20,6 +25,7 @@
     <div v-else>
         <h5>Nothing to see here</h5>
     </div>
+  </div>
   </div>
 </template>
 
@@ -47,11 +53,16 @@ export default {
         .catch( error => {
             console.log(error)
             })
-        }
+        },
+        getVal(){
+            this.token=localStorage.getItem("auth_token")
+            if(this.token){
+                this.getPosts()
+            }
+        },
     },
     created() {
-        this.getPosts()
-        // location.reload(true)
+        this.getVal()
        },
 
 

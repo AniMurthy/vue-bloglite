@@ -67,15 +67,7 @@ def authors_profile_pic():
     return jsonify({"pic":pic})
 
 
-@app.route('/jobs',methods=['GET','POST'])
-@auth_required("token")
-def jobs():
-  user_id=current_user.id
-  username=current_user.username
-  if request.method == 'GET':
-    job=tasks.sayHello.delay(username)
-    result = job.wait()
-    return str(result)
+
 
 
 @app.route('/author/profile/<id>',methods=['GET'])
@@ -290,3 +282,15 @@ def posts_update(post_id):
     post.date_modified=datetime.datetime.now()
     db.session.commit()
     return jsonify({"Title":title,"Content":content,"Author_id":user_id,"Date":date})
+
+#celery jobs-------------------------------------------------------------------------------
+
+@app.route('/jobs',methods=['GET','POST'])
+@auth_required("token")
+def jobs():
+  user_id=current_user.id
+  username=current_user.username
+  if request.method == 'GET':
+    job=tasks.sayHello.delay(username)
+    result = job.wait()
+    return str(result)

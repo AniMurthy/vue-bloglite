@@ -2,6 +2,11 @@
     <div class="conatiner mx-5 my-5">
         <h4>Search for an author</h4>
         <hr/>
+        <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else>
         <form >
         <input class="form-control me-2" placeholder="Enter username to be searched" v-model="partial">
         <button class="btn btn-success my-3" v-on:click.prevent="search">Search</button>
@@ -16,6 +21,7 @@
             <strong>{{ err }}</strong>
         </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -59,6 +65,9 @@ export default {
                 }
 
         },
+        getVal(){
+            this.token=localStorage.getItem("auth_token")
+        },
         follow(id){
           fetch(`http://127.0.0.1:5000/author/follow/${id}`,{
                 method:"POST",
@@ -79,7 +88,10 @@ export default {
             })
         }
 
-    }
+    },
+    created() {
+        this.getVal()
+       }
 
 }
 </script>

@@ -4,15 +4,19 @@
       <div class="col" >
         <h4>Who I'm Following</h4>
         <hr/>
-        <div v-if="follows.length">
-          <div class="row"  v-for="follow in follows" :key="follow.id">
-            <router-link :to="{name:'authorprofile',params:{id:follow.id}}" class="btn btn-primary my-3 col">{{ follow.name }}</router-link>
-            <p class="col my-3"><button class="btn btn-warning" v-on:click="unfollow(follow.id)">unfollow</button></p>
-          </div>
+        <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else>
+      <div v-if="follows.length">
+        <div class="row"  v-for="follow in follows" :key="follow.id">
+          <router-link :to="{name:'authorprofile',params:{id:follow.id}}" class="btn btn-primary my-3 col">{{ follow.name }}</router-link>
+          <p class="col my-3"><button class="btn btn-warning" v-on:click="unfollow(follow.id)">unfollow</button></p>
         </div>
-        <div v-else>
-          <p>You're not following anyone</p>
-        </div>
+      </div>
+      <div v-else>
+        <p>You're not following anyone</p>
       </div>
       <div class="col" >
         <div class="col">
@@ -29,6 +33,8 @@
         </div>
       </div>
     </div>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -57,6 +63,13 @@ export default {
         .catch( error => {
             console.log(error)
             })
+        },
+        getVal(){
+          this.token=localStorage.getItem("auth_token")
+          if(this.token){
+            this.getFollows(),
+            this.getFollowing()
+          }
         },
         getFollowing(){
             fetch('http://127.0.0.1:5000/author/followers',{
@@ -94,8 +107,7 @@ export default {
         }
     },
     created(){
-      this.getFollows(),
-      this.getFollowing()
+      this.getVal()
     }
 
 }

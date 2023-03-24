@@ -1,8 +1,16 @@
 <template>
-  <div class="container my-5 mx-5 row align-items-center">
-    <h4 class="col">My Posts</h4>
+  <div class="container mx-5 my-5">
+  <h4 class="col">My Posts</h4>
+  <hr/>
+  <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else class="container my-5 mx-5 row align-items-center">
+    
     <button class="btn btn-success col-md-auto mb-2" v-on:click="createPost()">create Post</button>
-    <hr/>
+    
+    
     <div v-if="posts.length">
       <div v-for="post in posts" :key="post.Id">
           <h5><u>{{post.Title}}</u></h5>
@@ -13,9 +21,11 @@
             <p v-if="post.Date_m"><u>Date modified:</u> {{post.Date_m}}</p>
             <button class="btn btn-danger mr-3" v-on:click="delPost(post.Id)">Delete Post</button>
             <router-link :to="{name:'editpost',params:{id:post.Id}}" class="btn btn-warning mx-3">Update Post</router-link>
-        </div>
+            <hr/>
+        </div> 
       </div>
     <div v-else>Pease create a post</div>
+    </div>
   </div>
 </template>
 
@@ -54,6 +64,12 @@ export default {
             console.log(error)
             })
         },
+        getVal(){
+          this.token=localStorage.getItem("auth_token")
+          if(this.token){
+            this.getAuthorPosts()
+          }
+        },
         delPost(post_id){
       fetch(`http://127.0.0.1:5000/author/post/${post_id}/delete`,{
         method:"POST",
@@ -78,7 +94,7 @@ export default {
     },
     },
     created() {
-        this.getAuthorPosts()
+        this.getVal()
        }
 
 }

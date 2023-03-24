@@ -2,7 +2,11 @@
   <div class="container mx-5 my-5" >
     <h4>Profile page</h4>
     <hr/>
-    <div>
+    <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else>
         <h5><u>Author name:</u> {{ author.Name }}</h5>
         <h5><u>Email:</u> {{ author.Author_Email }}</h5>
         <h5><u>Number of Posts:</u> {{ author.no_posts }}</h5>
@@ -57,6 +61,12 @@ export default {
             console.log(error)
             })
         },
+        getVal(){
+            this.token=localStorage.getItem("auth_token")
+            if(this.token){
+                this.get_dets(`${this.id}`)
+            }
+        },
         get_dets(id){
             fetch(`http://127.0.0.1:5000/author/profile/${id}`,{
                 method:"GET",
@@ -76,7 +86,7 @@ export default {
         }
     },
     created(){
-        this.get_dets(`${this.id}`)
+        this.getVal()
     }
 
 }

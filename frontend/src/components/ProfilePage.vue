@@ -2,6 +2,13 @@
   <div class="container my-5 mx-5" >
     <h4>Profile page</h4>
     <hr/>
+    <div v-if="this.token == null">
+    <h5>Please Login First</h5>
+    <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+    </div>
+    <div v-else>
+      <!-- <div>
+        <p>{{token}}</p> -->
     <!-- <img :src="thumbnailUrl" class="img-fluid "> -->
       <form @submit.prevent="uploadImage" enctype="multipart/form-data">
         <input type="file" ref="image">
@@ -10,13 +17,14 @@
         <h5><u>Userame:</u> {{author.Name}}</h5>
         <p><u>Email_id:</u> {{author.Author_Email}}</p>
         <router-link to="/posts" class="btn btn-primary mr-2">Number of posts: {{author.no_posts}} </router-link>
-        <router-link to="/follows" class="btn btn-primary mx-2">Number of followers: {{author.no_follows}}</router-link>
-        <router-link to="/follows" class="btn btn-primary mx-2">Number of following: {{author.no_following}}</router-link>
+        <router-link to="/follows" class="btn btn-primary mx-2">Number of following: {{author.no_follows}}</router-link>
+        <router-link to="/follows" class="btn btn-primary mx-2">Number of followers: {{author.no_following}}</router-link>
     <div>
       <form @submit.prevent="delProfile">
       <button type="submit" class="btn btn-danger my-2">Delete account</button>
     </form>
     </div>
+  </div>
   </div>
 </template>
 
@@ -25,7 +33,8 @@ export default {
   data() {
     return{
       author:{},
-      propic:"tempic.png"
+      propic:"tempic.png",
+      token:null
     }
   },
   computed: {
@@ -46,10 +55,17 @@ export default {
       .then(resp => resp.json())
       .then(data =>{
         this.author = data
+        // console.log(localStorage.getItem("auth_token"))
       })
       .catch(error => {
             console.log(error)
             })
+    },
+    getVal(){
+      this.token=localStorage.getItem("auth_token")
+      if(this.token){
+        this.getProfile()
+      }
     },
     delProfile(){
       fetch(`http://127.0.0.1:5000/author/delete`,{
@@ -108,8 +124,7 @@ export default {
     // }
   },
   created() {
-      this.getProfile()
-      // this.getImage()
+      this.getVal()
     }
 
 }

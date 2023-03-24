@@ -1,6 +1,5 @@
 from flask import Flask
 import workers
-
 from models import Users, Role
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from config import *
