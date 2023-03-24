@@ -2,6 +2,7 @@ from flask import Flask,request,jsonify,send_file
 import datetime
 
 import flask_excel as excel
+import csv
 
 from io import BytesIO
 
@@ -289,7 +290,7 @@ def posts_update(post_id):
 
 #celery jobs-------------------------------------------------------------------------------
 
-@app.route('/DownloadCSV',methods=['GET','POST'])
+@app.route('/DownloadCSV',methods=['GET'])
 @auth_required("token")
 def dwonloadcsv():
   user_id=current_user.id
@@ -316,14 +317,14 @@ def dwonloadcsv():
     return excel.make_response_from_dict(d, file_type=extension_type, file_name=filename)
 
 
-@app.route('/report',methods=['GET','POST'])
+@app.route('/report',methods=['GET'])
 @auth_required("token")
 def pdf_report():
   user_id=current_user.id
   username=current_user.username
   if request.method == 'GET':
-    post=Posts.query.filter(Posts.author_id==user_id).all()
-    posts=len(Posts.query.filter(Posts.author_id==user_id).all())
+    posts=Posts.query.filter(Posts.author_id==user_id).all()
+    post=len(Posts.query.filter(Posts.author_id==user_id).all())
     follow=len(Followers.query.filter(Followers.user_id==user_id).all())
     following=len(Followers.query.filter(Followers.following_id==user_id).all())
     data={}
@@ -331,13 +332,13 @@ def pdf_report():
     data["username"]=username
     data["followers_no"]=follow
     data["following_no"]=following
-    data["no_posts"]=posts
+    data["no_posts"]=post
     result=[]
-    if post:
-      for i in range(len(post)):
+    if posts:
+      for i in range(len(posts)):
         paragraphs=[]
-        paragraphs=((post[i].content.split('\\n')))
-        result.append({"Title":post[i].title,"Content":paragraphs,"Date":post[i].date_created})
-    data["post"]=result
+        paragraphs=((posts[i].content.split('\\n')))
+        result.append({"Title":posts[i].title,"Content":paragraphs,"Date":posts[i].date_created,"Date_m":posts[i].date_modified})
+    data["posts"]=result
     create_pdf(data,username)
     return jsonify(data)

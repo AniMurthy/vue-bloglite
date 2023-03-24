@@ -11,5 +11,4 @@ def create_pdf(data,username):
     message = format_doc("Backend/template_for_pdf.html",data=data)
     html=HTML(string=message)
     file_name=str(username)+".pdf"
-    print(file_name)
     html.write_pdf(target=file_name)

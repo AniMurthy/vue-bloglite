@@ -18,11 +18,12 @@
         <p><u>Email_id:</u> {{author.Author_Email}}</p>
         <router-link to="/posts" class="btn btn-primary mr-2">Number of posts: {{author.no_posts}} </router-link>
         <router-link to="/follows" class="btn btn-primary mx-2">Number of following: {{author.no_follows}}</router-link>
-        <router-link to="/follows" class="btn btn-primary mx-2">Number of followers: {{author.no_following}}</router-link>
+        <router-link to="/follows" class="btn btn-primary ml-2">Number of followers: {{author.no_following}}</router-link>
     <div>
+      <button v-on:click="getReport()" class="btn btn-info mt-2">Generate PDF report</button>
       <form @submit.prevent="delProfile">
       <button type="submit" class="btn btn-danger my-2">Delete account</button>
-    </form>
+      </form>
     </div>
   </div>
   </div>
@@ -66,6 +67,21 @@ export default {
       if(this.token){
         this.getProfile()
       }
+    },
+    getReport(){
+      fetch(`http://127.0.0.1:5000/report`,{
+        method:"GET",
+        headers:{
+          "Content-Type":"application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Authentication_token":localStorage.getItem("auth_token")
+        }
+      })
+      .then(resp => resp.json())
+      .catch(error => {
+            console.log(error)
+            })
+
     },
     delProfile(){
       fetch(`http://127.0.0.1:5000/author/delete`,{

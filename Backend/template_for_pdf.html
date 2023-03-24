@@ -4,6 +4,32 @@
 </head>
 <body>
     <article id="cover">
-        <h1>{{ data['username']}}</h1>
+        <h1>This is the PDF Report for:<br><u>{{ data['username']}}</u></h1>
+        <h5><u>User Details</u></h5>
+        <p><u>Username:</u> {{ data['username']}}</p>
+        <p><u>User ID:</u> {{ data['id']}}</p>
+        <p><u>Number of posts:</u> {{ data['no_posts']}}</p>
+        <p><u>Number of followers:</u> {{ data['followers_no']}}</p>
+        <p><u>Number following:</u> {{ data['following_no']}}</p>
+    </article>
+    <article>
+        <h2>Posts</h2>
+        {% if data['no_posts'] !=0 %}
+            {% for post in data['posts'] %}
+            <div>
+                <h4>{{loop.index}}. <u>{{post.Title}}</u></h4>
+                {% for c in post.Content %}
+                    <p>{{c}}</p>
+                {% endfor %}
+                <p><u>Date created:</u> {{post.Date}}</p>
+                {% if post.Date_m != None %}
+                <p><u>Date modified:</u> {{post.Date_m}}</p>
+                {% endif %}
+                <br>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No posts yet</p>
+        {% endif %}
     </article>
 </body>
