@@ -299,22 +299,28 @@ def dwonloadcsv():
     # job=tasks.sayHello.delay(username)
     # result = job.wait()
     # return str(result)
-    post=Posts.query.filter(Posts.author_id==user_id).all()
+    posts=Posts.query.filter(Posts.author_id==user_id).all()
     author=Users.query.filter(Users.id==user_id).first()
-    if post:
-      result=[]
-      for i in range(len(post)):
-        author=Users.query.filter(Users.id==post[i].author_id).first()
-        paragraphs=[]
-        paragraphs=((post[i].content.split('\\n')))
-        result.append({"Title":post[i].title,"Content":paragraphs,"Date":post[i].date_created,"Date_m":post[i].date_modified,"post_d":post[i].id})
+    d1=[['Title','Content','Date created','Date modified']]
+    if posts:
+      for i in range(len(posts)):
+        post=[]
+        post.append(posts[i].title)
+        post.append(posts[i].content)
+        post.append(posts[i].date_created)
+        if posts[i].date_modified:
+          post.append(posts[i].date_modified)
+        else:
+          post.append('Not modified')
+        d1.append(post)
     excel.init_excel(app)
     extension_type = "csv"
     filename = username + "." + extension_type
-    d = {'Author_id': user_id,
-         'Name': author.username,
-         'posts':result}
-    return excel.make_response_from_dict(d, file_type=extension_type, file_name=filename)
+    with open(filename,'w',newline='') as file:
+      writer = csv.writer(file)
+      writer.writerows(d1)
+    return d1
+
 
 
 @app.route('/report',methods=['GET'])
