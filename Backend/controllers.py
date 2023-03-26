@@ -319,7 +319,7 @@ def dwonloadcsv():
     with open(filename,'w',newline='') as file:
       writer = csv.writer(file)
       writer.writerows(d1)
-    return d1
+    return jsonify("Successfully created CSV")
 
 
 
@@ -347,4 +347,4 @@ def pdf_report():
         result.append({"Title":posts[i].title,"Content":paragraphs,"Date":posts[i].date_created,"Date_m":posts[i].date_modified})
     data["posts"]=result
     create_pdf(data,username)
-    return jsonify(data)
+    return jsonify("Successfully created PDF")
