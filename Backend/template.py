@@ -10,5 +10,5 @@ def format_doc(template_file,data={}):
 def create_pdf(data,username):
     message = format_doc("Backend/template_for_pdf.html",data=data)
     html=HTML(string=message)
-    file_name=str(username)+".pdf"
+    file_name=str("data/"+username)+".pdf"
     html.write_pdf(target=file_name)

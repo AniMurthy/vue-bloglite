@@ -290,6 +290,14 @@ def posts_update(post_id):
 
 #celery jobs-------------------------------------------------------------------------------
 
+# @app.route('/testcelery',methods=['GET'])
+# def testcelery():
+#     job=tasks.sayHello.delay("username")
+#     result = job.wait()
+#     return str(result)
+
+
+
 @app.route('/DownloadCSV',methods=['GET'])
 @auth_required("token")
 def dwonloadcsv():
@@ -315,10 +323,11 @@ def dwonloadcsv():
         d1.append(post)
     excel.init_excel(app)
     extension_type = "csv"
-    filename = username + "." + extension_type
+    filename = "data/"+username + "." + extension_type
     with open(filename,'w',newline='') as file:
       writer = csv.writer(file)
       writer.writerows(d1)
+      tasks.sayHello.delay(username)
     return jsonify("Successfully created CSV")
 
 
@@ -347,4 +356,5 @@ def pdf_report():
         result.append({"Title":posts[i].title,"Content":paragraphs,"Date":posts[i].date_created,"Date_m":posts[i].date_modified})
     data["posts"]=result
     create_pdf(data,username)
+    tasks.csv()
     return jsonify("Successfully created PDF")
