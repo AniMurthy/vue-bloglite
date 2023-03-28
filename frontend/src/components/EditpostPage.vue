@@ -1,12 +1,12 @@
 <template>
-  <div class="container mx-5 my-5">
+  <div class="container-fluid mx-5 my-5">
     <h4>Update your post</h4>
     <hr/>
   <label for="Title" class="form-label mt-3 h5" >Title</label>
   <input class="form-control" id="Title" v-model="title">
     <label for="Content" class="form-label mt-3 h5">Content</label>
     <textarea class="form-control" id="Content" rows="10" v-model="content"></textarea>
-    <button type="submit" class="btn btn-success my-3" v-on:click="updatePost(id)">Publish</button>
+    <button type="submit" class="btn btn-success my-3" v-on:click="updatePost(id)">Update</button>
 </div>
 </template>
 

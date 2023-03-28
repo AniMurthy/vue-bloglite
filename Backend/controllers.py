@@ -179,10 +179,10 @@ def author_search():
       if user_list:
         username_list=[]
         for user in user_list:
-          if user.id==user_id:
-            pass
-          else:
-            username_list.append({"id":user.id,"name":user.username})
+          if user.id!=user_id:
+            followMe=bool(Followers.query.filter(Followers.following_id==user.id).filter(Followers.user_id==user_id).first())
+            username_list.append({"id":user.id,"name":user.username,"following":followMe})
+            print(username_list)
         return username_list
       else:
         return jsonify('No such user')
@@ -304,9 +304,6 @@ def dwonloadcsv():
   user_id=current_user.id
   username=current_user.username
   if request.method == 'GET':
-    # job=tasks.sayHello.delay(username)
-    # result = job.wait()
-    # return str(result)
     posts=Posts.query.filter(Posts.author_id==user_id).all()
     author=Users.query.filter(Users.id==user_id).first()
     d1=[['Title','Content','Date created','Date modified']]
@@ -356,5 +353,6 @@ def pdf_report():
         result.append({"Title":posts[i].title,"Content":paragraphs,"Date":posts[i].date_created,"Date_m":posts[i].date_modified})
     data["posts"]=result
     create_pdf(data,username)
-    tasks.csv()
+    file_name=str("data/"+username)+".pdf"
+    tasks.csv(current_user.email,file_name)
     return jsonify("Successfully created PDF")

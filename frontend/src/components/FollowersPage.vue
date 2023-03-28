@@ -1,34 +1,49 @@
 <template>
-  <div class="container mx-5 my-5">
+  <div class="container-fluid mx-5 my-5">
     <div class="row">
       <div>
         <h4>Followers and Following</h4>
         <hr/>
         <div v-if="this.token == null">
         <h5>Please Login First</h5>
-        <router-link to="/" class="btn btn-primary mr-2">Login</router-link>
+        <router-link to="/" class="btn btn-primary mx-2">Login</router-link>
         </div>
         <div v-else class="row">
-          <div class="col">
+          <div class="col mx-5">
           <h5>Who I'm Following</h5>
           <hr/>
-          <div v-if="follows.length">
-            <div class="row"  v-for="follow in follows" :key="follow.id">
-              <router-link :to="{name:'authorprofile',params:{id:follow.id}}" class="btn btn-primary my-3 col">{{ follow.name }}</router-link>
-              <p class="col my-3"><button class="btn btn-warning" v-on:click="unfollow(follow.id)">unfollow</button></p>
+          <div v-if="follows.length" class="row row-cols-1 row-cols-lg-2 g-4">
+            <div v-for="follow in follows" :key="follow.id">
+              <div class="card text-bg-light col my-3">
+                <router-link :to="{name:'authorprofile',params:{id:follow.id}}" style="text-decoration:none">
+                  <div class="card-body">
+                    <h3 class="card-title text-center text-dark align-middle">{{ follow.name }}</h3>
+                  </div>
+                  <div class="card-footer text-center ">
+                    <p><button class="btn btn-danger align-middle" v-on:click="unfollow(follow.id)">unfollow</button></p>
+                  </div>
+                </router-link>
+              </div>
             </div>
           </div>
           <div v-else>
             <p>You're not following anyone</p>
           </div>
           </div>
-          <div class="col" >
-            <div class="col">
+          <div class="col mx-5" >
+            <div>
               <h5>Who is Following Me</h5>
               <hr/>
-              <div v-if="following.length">
-                <div class="row" v-for="follow in following" :key="follow.id">
-                  <router-link :to="{name:'authorprofile',params:{id:follow.id}}" class="btn btn-primary my-3 col">{{ follow.name }}</router-link>
+              <div v-if="following.length" class="row row-cols-1 row-cols-lg-2 g-4">
+                <div v-for="follow in following" :key="follow.id">
+                  <div class="card text-bg-light col my-3">
+                    <router-link :to="{name:'authorprofile',params:{id:follow.id}}" style="text-decoration:none">
+                      <div class="card-body">
+                        <h3 class="card-title text-center text-dark align-middle">{{ follow.name }}</h3>
+                      </div>
+                    </router-link>
+                  </div>
+                  <!-- <router-link :to="{name:'authorprofile',params:{id:follow.id}}" class="btn btn-primary my-3 col">{{ follow.name }}</router-link> -->
                 </div>
               </div>
               <div v-else>

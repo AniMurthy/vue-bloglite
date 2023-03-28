@@ -1,5 +1,5 @@
 <template>
-    <div class="conatiner mx-5 my-5">
+    <div class="conatiner-fluid mx-5 my-5">
       <h4>Login</h4>
       <hr/>
       <form>
@@ -29,7 +29,7 @@ export default {
     },
     methods:{
       login(){ 
-        if(this.email||this.password){
+        if(this.email&&this.password){
                   fetch('http://127.0.0.1:5000/login?include_auth_token',{
                     method:"POST",
                     headers:{

@@ -1,5 +1,5 @@
 <template>
-    <div class="conatiner mx-5 my-5">
+    <div class="conatiner-fluid mx-5 my-5">
       <h4>Sign up for the Blog</h4>
       <hr/>
       <form>
