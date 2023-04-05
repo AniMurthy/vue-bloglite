@@ -19,30 +19,11 @@ import tasks
 from template import *
 
 
-#New Authhor ----------------------------------------------------------------
-@app.route('/get_id',methods=['GET','POST'])
-@auth_required("token")
-def get_id():
-  user_id=current_user.id
-  username=current_user.username
-  if request.method=='GET':
-    print(user_id)
-    return jsonify({"author_id":user_id})
-  # if request.method=='POST':
-  #   name=request.json['name']
-  #   email=request.json['email']
-  #   pwd=request.json['pwd']
-  #   emails=Users.query.filter(Users.email_id==email).first()
-  #   if emails:
-  #     return jsonify('Email already registered. Please register with a diffrent email or login')
-  #   else:
-  #     user = Users(name=name,email_id=email,password=pwd)
-  #     db.session.add(user)
-  #     db.session.commit()
-  #     return jsonify("name created successfully")
 
 
 # Author Actions ------------------------------------------------------------
+
+#returns the info about the currnt user
 @app.route('/author',methods=['GET'])
 @auth_required("token")
 def authors():
@@ -61,23 +42,19 @@ def authors():
 
 
 
-@app.route('/author/pic',methods=['GET','POST'])
-@auth_required("token")
-def authors_profile_pic():
-  user_id=current_user.id
-  username=current_user.username
-  if request.method == 'GET':
-    pic = base64.b64encode(Users.query.filter(Users.id==user_id).first().profile_pic).decode('utf-8')
-    print(pic)
-    return jsonify({"pic":pic})
+# @app.route('/author/pic',methods=['GET','POST'])
+# @auth_required("token")
+# def authors_profile_pic():
+#   user_id=current_user.id
+#   username=current_user.username
+#   if request.method == 'GET':
+#     pic = base64.b64encode(Users.query.filter(Users.id==user_id).first().profile_pic).decode('utf-8')
+#     print(pic)
+#     return jsonify({"pic":pic})
 
-
-
-
-
+#returns the info about the user with the given id
 @app.route('/author/profile/<id>',methods=['GET'])
 @auth_required("token")
-# @login_required
 def authors_profile(id):
   user_id=current_user.id
   username=current_user.username
@@ -100,6 +77,7 @@ def authors_profile(id):
     else:
       return jsonify({"Name":author.username,"Author_id":author.id,"Author_Email":author.email,"no_follows":follow,"no_posts":posts,"no_following":following,"posts":result,"followMe":followMe})
 
+#returns the users following the current user
 @app.route('/author/following',methods=['GET'])
 @auth_required("token")
 def author_following():
@@ -112,12 +90,12 @@ def author_following():
       id=following[i].user_id
       name=Users.query.filter(Users.id==id).first().username
       follow.append({"id":id,"name":name})
-      # print(follow)
     if follow==None:
       return jsonify('Following don\'t exist ')
     else:
       return follow
-    
+
+#returns the users the current user is following   
 @app.route('/author/followers',methods=['GET'])
 @auth_required("token")
 def author_followers():
@@ -130,12 +108,12 @@ def author_followers():
       id=following[i].following_id
       name=Users.query.filter(Users.id==id).first().username
       follow.append({"id":id,"name":name})
-      # print(follow)
     if follow==None:
       return jsonify('Following don\'t exist ')
     else:
       return follow
 
+#used to follow another user
 @app.route('/author/follow/<id>',methods=['POST'])
 @auth_required("token")
 def author_follow(id):
@@ -153,6 +131,7 @@ def author_follow(id):
       db.session.commit()
       return jsonify('Followed')
 
+#used to unfollow another user
 @app.route('/author/unfollow/<id>',methods=['POST'])
 @auth_required("token")
 def author_unfollow(id):
@@ -167,6 +146,7 @@ def author_unfollow(id):
     else:
       return jsonify('Not following')
 
+#used to search for users
 @app.route('/author/search',methods=['POST'])
 @auth_required("token")
 def author_search():
@@ -189,6 +169,8 @@ def author_search():
     else:
       return []
 
+#GET method returns all the posts of the current user
+#POST method used to create a new post by current user
 @app.route('/author/post',methods=['GET','POST'])
 @auth_required("token")
 def author_posts():
@@ -203,11 +185,9 @@ def author_posts():
         paragraphs=[]
         paragraphs=((post[i].content.split('\\n')))
         result.append({"Title":post[i].title,"Content":paragraphs,"Date":post[i].date_created,"Date_m":post[i].date_modified,"Id":post[i].id})
-        # print(result)
       return result
     else:
       return []
-          
   if request.method == 'POST':
     title=request.json['title']
     content=request.json['content']
@@ -217,6 +197,7 @@ def author_posts():
     db.session.commit()
     return jsonify({"Title":title,"Content":content,"Author_id":user_id,"Date":date})
 
+#used to delete current user account
 @app.route('/author/delete',methods=['POST'])
 @auth_required("token")
 def user_del():
@@ -232,6 +213,8 @@ def user_del():
       return jsonify('No such user exists')
 
 #Post Actions--------------------------------------------------------------------------
+
+#returns all the posts by all the users for the feed page
 @app.route('/post',methods=['GET'])
 @auth_required("token")
 def posts():
@@ -249,6 +232,7 @@ def posts():
     else:
       return []
 
+#used to delete the post with "post_id" of the current user
 @app.route('/author/post/<post_id>/delete',methods=['POST'])
 @auth_required("token")
 def posts_del(post_id):
@@ -263,6 +247,7 @@ def posts_del(post_id):
     else:
       return jsonify('No such post exists')
 
+#used to delete the post with "post_id" of the current user
 @app.route('/author/post/<post_id>/edit',methods=['GET','POST'])
 @auth_required("token")
 def posts_update(post_id):
@@ -297,7 +282,7 @@ def posts_update(post_id):
 #     return str(result)
 
 
-
+#Creates a CSV file which is downloadable
 @app.route('/DownloadCSV',methods=['GET'])
 @auth_required("token")
 def dwonloadcsv():
@@ -318,17 +303,13 @@ def dwonloadcsv():
         else:
           post.append('Not modified')
         d1.append(post)
-    excel.init_excel(app)
     extension_type = "csv"
     filename = "data/"+username + "." + extension_type
-    with open(filename,'w',newline='') as file:
-      writer = csv.writer(file)
-      writer.writerows(d1)
-      tasks.sayHello.delay(username)
+    tasks.csv(d1,filename)
     return jsonify("Successfully created CSV")
 
 
-
+#creates a downloadable PDF report
 @app.route('/report',methods=['GET'])
 @auth_required("token")
 def pdf_report():
@@ -354,5 +335,5 @@ def pdf_report():
     data["posts"]=result
     create_pdf(data,username)
     file_name=str("data/"+username)+".pdf"
-    tasks.csv(current_user.email,file_name)
+    tasks.pdf(current_user.email,file_name)
     return jsonify("Successfully created PDF")

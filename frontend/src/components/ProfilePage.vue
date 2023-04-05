@@ -124,7 +124,7 @@ export default {
 
     },
     exportcsv(){
-      fetch(`http://127.0.0.1:5000/author/post`,{
+      fetch(`http://127.0.0.1:5000/DownloadCSV`,{
                 method:"GET",
                 headers:{
                     "Content-Type":"text/csv",
@@ -135,7 +135,7 @@ export default {
         })
         .then(resp=> {
          resp.json();
-         alert("PDF Report Generated");
+         alert("CSV Generated");
       })
       .catch(error => {
             console.log(error)
