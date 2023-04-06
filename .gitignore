@@ -2,8 +2,8 @@
 node_modules
 /dist
 __pycache__
-project-env
-/package-lock.json
+/project-env
+package-lock.json
 /frontend/package.json
 /rontend/package-lock.json
 /frontend/babel.config.js
