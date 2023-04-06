@@ -2,13 +2,13 @@
 node_modules
 /dist
 __pycache__
-/project-env
+project-env
 package-lock.json
-/frontend/package.json
-/frontend/package-lock.json
-/frontend/babel.config.js
-/frontend/jsconfig.json
-/frontend/README.md
+frontend/package.json
+frontend/package-lock.json
+frontend/babel.config.js
+frontend/jsconfig.json
+frontend/README.md
 
 
 # local env files

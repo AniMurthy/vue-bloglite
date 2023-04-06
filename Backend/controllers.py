@@ -170,7 +170,7 @@ def author_search():
       return []
 
 #the "GET" method returns all the posts of the current user
-#the "POST" method used to create a new post by current user
+#the  "POST" method used to create a new post by current user
 @app.route('/author/post',methods=['GET','POST'])
 @auth_required("token")
 def author_posts():
