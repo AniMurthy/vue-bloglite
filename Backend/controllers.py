@@ -192,7 +192,7 @@ def author_posts():
     title=request.json['title']
     content=request.json['content']
     date=datetime.datetime.now()
-    post = Posts(title=title,content=content.replace('\n','\\n'),author_id=user_id)
+    post = Posts(title=title,content=content.replace('\n','\\n'),author_id=user_id,date_created=date)
     db.session.add(post)
     db.session.commit()
     return jsonify({"Title":title,"Content":content,"Author_id":user_id,"Date":date})
@@ -202,10 +202,18 @@ def author_posts():
 @auth_required("token")
 def user_del():
   user_id=current_user.id
-  username=current_user.username
   if request.method == 'POST':
     user=Users.query.filter(Users.id==user_id).first()
     if user:
+      temp=Followers.query.filter(Followers.user_id==user_id).all()
+      if temp:
+        Followers.query.filter(Followers.user_id==user_id).delete()
+      temp=Followers.query.filter(Followers.following_id==user_id).all()
+      if temp:
+        Followers.query.filter(Followers.following_id==user_id).delete()
+      temp=Posts.query.filter(Posts.author_id==user_id).all()
+      if temp:
+        Posts.query.filter(Posts.author_id==user_id).delete()
       Users.query.filter(Users.id==user_id).delete()
       db.session.commit()
       return jsonify('Deleted successfully')
@@ -247,7 +255,9 @@ def posts_del(post_id):
     else:
       return jsonify('No such post exists')
 
-#used to delete the post with "post_id" of the current user
+#used to edit the post with "post_id" of the current user
+#the "get" method returns the currently populated values of title and content
+#the "post" method edits the new values to the database
 @app.route('/author/post/<post_id>/edit',methods=['GET','POST'])
 @auth_required("token")
 def posts_update(post_id):
@@ -275,17 +285,12 @@ def posts_update(post_id):
 
 #celery jobs-------------------------------------------------------------------------------
 
-# @app.route('/testcelery',methods=['GET'])
-# def testcelery():
-#     job=tasks.sayHello.delay("username")
-#     result = job.wait()
-#     return str(result)
 
 
-#Creates a CSV file which is downloadable
+#----------------------------Creates a CSV file which is downloadable
 @app.route('/DownloadCSV',methods=['GET'])
 @auth_required("token")
-def dwonloadcsv():
+def downloadcsv():
   user_id=current_user.id
   username=current_user.username
   if request.method == 'GET':
@@ -304,12 +309,11 @@ def dwonloadcsv():
           post.append('Not modified')
         d1.append(post)
     extension_type = "csv"
-    filename = "data/"+username + "." + extension_type
-    tasks.csv(d1,filename)
+    filename = "../data/"+username + "." + extension_type
+    tasks.downloadcsv(d1,filename)
     return jsonify("Successfully created CSV")
 
-
-#creates a downloadable PDF report
+#----------------------------creates a downloadable PDF report
 @app.route('/report',methods=['GET'])
 @auth_required("token")
 def pdf_report():
@@ -334,6 +338,8 @@ def pdf_report():
         result.append({"Title":posts[i].title,"Content":paragraphs,"Date":posts[i].date_created,"Date_m":posts[i].date_modified})
     data["posts"]=result
     create_pdf(data,username)
-    file_name=str("data/"+username)+".pdf"
+    file_name=str("../data/"+username)+".pdf"
     tasks.pdf(current_user.email,file_name)
     return jsonify("Successfully created PDF")
+
+#----------------------------------------------END OF FILE-----------------------------------------------------------

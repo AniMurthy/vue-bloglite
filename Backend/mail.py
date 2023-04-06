@@ -12,6 +12,7 @@ SMPTP_SERVER_PORT = 1025
 SENDER_ADDRESS = "report@bloglite.com"
 SENDER_PASSWORD = ""
 
+#used to send email to a fake smtp server and attach a file
 def send_email(to_address, subject, message,attachment_file):
     msg = MIMEMultipart ()
     msg["From"] = SENDER_ADDRESS
@@ -28,17 +29,3 @@ def send_email(to_address, subject, message,attachment_file):
     s.send_message(msg)
     s.quit()
     return True
-
-# def format message (template_file, data=(}):
-
-# with open (template_file) as file_:
-
-# template = Template (file_. read () )
-
-# return template. render (data=data)
-
-# def send welcome message (data):
-
-# message = format message ("Welcome_email.html", data=data)
-
-# send email (data["email"], subject="Welcome email - 1", message-message)

@@ -1,0 +1,342 @@
+openapi: 3.0.0
+info:
+  title: MAD 2 Project
+  description: >-
+    <div>This API is a standalone API which is working on the same database as
+    the Final project app. This API preforms CRUD on the logs table and its
+    entries. <h3>General instructions:</h3> <ol> <li> Since the API works on the
+    same database as the app and therefore expects the database to exist. So run
+    app first. </li> </ol> </div>
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5000/
+components:
+  securitySchemes:
+    Auth:
+      type: apiKey
+      in: header
+      name: authentication_token
+paths:
+  /login:
+    summary: To login and create a unique Token.
+    parameters:
+        - name: include_auth_token
+          in: query
+          description: to include authentication token in the response select true
+          required: true
+          schema:
+            type: boolean
+    post:
+      description: To login and create a unique Token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: anirudh@test.com
+                password:
+                  type: string
+                  example: Decent
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+            
+  /author:
+    summary: returns the info about the currnt user
+    description: returns the info about the currnt user
+    get:
+      security:
+      - Auth: []
+      description: returns the info about the currnt user
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /author/profile/{id}:
+    summary: returns the info about the user with the given id
+    description: returns the info about the user with the given id
+    get:
+      security:
+        - Auth: []
+      description: returns the info about the user with the given id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+  
+  /author/delete:
+    summary: returns the users following the current user
+    description: returns the users following the current user
+    post:
+      security:
+        - Auth: []
+      description: returns the users following the current user
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+  
+  /author/following:
+    summary: returns the users the current user is following
+    description: returns the users the current user is following
+    get:
+      security:
+      - Auth: []
+      description: returns the users the current user is following
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /author/followers:
+    summary: returns the users following the current user
+    description: returns the users following the current user
+    get:
+      security:
+      - Auth: []
+      description: returns the users following the current user
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /author/follow/{id}:
+    summary: used to follow another user
+    post:
+      security:
+      - Auth: []
+      description: used to follow another user
+      parameters:
+        - in: path
+          name: id
+          description: Enter the id of the user to be followed
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+  
+  /author/unfollow/{id}:
+    summary: used to unfollow another user
+    post:
+      security:
+      - Auth: []
+      description: used to unfollow another user
+      parameters:
+        - in: path
+          name: id
+          description: Enter the id of the user to be unfollowed
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+  
+  /author/search:
+    summary: To search for a user.
+    post:
+      security:
+      - Auth: []
+      description: To search for a user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                partial:
+                  type: string
+                  example: ani
+      responses:
+        '200':
+          description: Request Successful
+        '404':
+          description: log not found
+        '500':
+          description: Internal Server Error
+  
+  /author/post:
+    summary: Returns all the posts of the current user and allows to create new posts
+    description: Returns all the posts of the current user
+    get:
+      security:
+      - Auth: []
+      description: Returns all the posts of the current user
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+    post:
+      security:
+      - Auth: []
+      description: create a new post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: anirudh@test.com
+                content:
+                  type: string
+                  example: Decent
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /author/post/{post_id}/delete:
+    summary: To delete a post
+    description: To delete a post
+    post:
+      security:
+      - Auth: []
+      description: To delete a post
+      parameters:
+        - in: path
+          name: post_id
+          description: enter the post_id to be deleted
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /author/post/{post_id}/edit:
+    summary: To edit a post
+    description: To edit a post
+    get:
+      security:
+      - Auth: []
+      description: To edit a post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+    post:
+      security:
+      - Auth: []
+      description: To edit a post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: anirudh@test.com
+                content:
+                  type: string
+                  example: Decent
+      parameters:
+        - in: path
+          name: post_id
+          description: Enter the id of the post to be edited
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+  
+  /DownloadCSV:
+    summary: To download the csv of all the posts of the current user
+    description: To download the csv of all the posts of the current user
+    get:
+      security:
+      - Auth: []
+      description: To download the csv of all the posts of the current user
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error
+          
+  /report:
+    summary: To create a PDF of the current user
+    description: To create a PDF of the current user
+    get:
+      security:
+      - Auth: []
+      description: To create a PDF of the current user
+      responses:
+        '200':
+          description: Request Successful
+        '401':
+          description: UNAUTHORIZED
+        '500':
+          description: Internal Server Error

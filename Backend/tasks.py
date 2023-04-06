@@ -9,7 +9,7 @@ from flask import current_app as app
 excel.init_excel(app)
 
 @celery.task()
-def csv(d1,file_name):
+def downloadcsv(d1,file_name):
     with open(file_name,'w',newline='') as file:
       writer = csv.writer(file)
       writer.writerows(d1)
@@ -20,4 +20,4 @@ def pdf(email,file_name):
     message="Please find your PFD report attached below.<br>This is an auto generated e-mail.<br>Please do not respond to this. "
     attachment_file=file_name
     res = send_email(email,subject,message,attachment_file)
-    return res
+    
