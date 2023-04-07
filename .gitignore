@@ -10,6 +10,7 @@ package-lock.json
 /frontend/jsconfig.json
 /frontend/README.md
 dump.rdb
+Backend/dump.rdb
 
 
 # local env files
