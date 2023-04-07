@@ -9,6 +9,7 @@ package-lock.json
 /frontend/babel.config.js
 /frontend/jsconfig.json
 /frontend/README.md
+dump.rdb
 
 
 # local env files
