@@ -11,16 +11,21 @@ excel.init_excel(app)
 
 @celery.task()
 def downloadcsv(d1,file_name):
-    with open(file_name,'w',newline='') as file:
-      writer = csv.writer(file)
-      writer.writerows(d1)
+  if not os.path.exists('../data'):
+    os.makedirs('../data')
+  with open(file_name,'w',newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(d1)
+  
 
 @celery.task()
 def pdf(email,file_name):
-    subject="PDF Report"
-    message="Please find your PFD report attached below.<br>This is an auto generated e-mail.<br>Please do not respond to this. "
-    attachment_file=file_name
-    res = send_email(email,subject,message,attachment_file)
+  if not os.path.exists('../data'):
+    os.makedirs('../data')
+  subject="PDF Report"
+  message="Please find your PFD report attached below.<br>This is an auto generated e-mail.<br>Please do not respond to this. "
+  attachment_file=file_name
+  res = send_email(email,subject,message,attachment_file)
 
 @celery.task()
 def daily_rem():
