@@ -285,8 +285,6 @@ def posts_update(post_id):
 
 #celery jobs-------------------------------------------------------------------------------
 
-
-
 #----------------------------Creates a CSV file which is downloadable
 @app.route('/DownloadCSV',methods=['GET'])
 @auth_required("token")
@@ -342,4 +340,9 @@ def pdf_report():
     tasks.pdf(current_user.email,file_name)
     return jsonify("Successfully created PDF")
 
+@app.route('/reminder',methods=['GET'])
+@auth_required("token")
+def rem():
+  res = tasks.daily_rem()
+  return res
 #----------------------------------------------END OF FILE-----------------------------------------------------------
