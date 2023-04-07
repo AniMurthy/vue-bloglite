@@ -143,7 +143,8 @@ export default {
 
     },
     delProfile(){
-      fetch(`http://127.0.0.1:5000/author/delete`,{
+      if(confirm("are you sure you want to delete the account?"))
+      {fetch(`http://127.0.0.1:5000/author/delete`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
@@ -160,7 +161,7 @@ export default {
       })
       .catch(error => {
             console.log(error)
-            })
+            })}
     },
     // uploadImage(){
     //   this.propic = this.$refs.image

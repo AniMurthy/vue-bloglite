@@ -88,21 +88,23 @@ export default {
           }
         },
         delPost(post_id){
-      fetch(`http://127.0.0.1:5000/author/post/${post_id}/delete`,{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Authentication_token":localStorage.getItem("auth_token")
-        }
-      })
-      .then(resp => resp.json())
-      .then(()=>{
-        location.reload()
-            })
-      .catch(error => {
-            console.log(error)
-            })
+          if(confirm("are you sure you want to delete this post?"))
+            {fetch(`http://127.0.0.1:5000/author/post/${post_id}/delete`,{
+              method:"POST",
+              headers:{
+                "Content-Type":"application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Authentication_token":localStorage.getItem("auth_token")
+                }
+              })
+              .then(resp => resp.json())
+              .then(()=>{
+                location.reload()
+              })
+              .catch(error => {
+                console.log(error)
+              })
+            }
     },
     createPost(){
       this.$router.push({
