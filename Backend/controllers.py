@@ -10,6 +10,9 @@ from sqlalchemy import null
 from models import *
 from flask_security import auth_required
 from flask import current_app as app
+
+from main import cache
+
 from flask_login import current_user
 
 import base64
@@ -23,6 +26,15 @@ from template import *
 
 # Author Actions ------------------------------------------------------------
 
+@cache.cached(timeout=10,key_prefix="get_auth_details")
+def get_auth_details():
+  user_id=current_user.id
+  author=Users.query.filter(Users.id==user_id).first()
+  posts=len(Posts.query.filter(Posts.author_id==user_id).all())
+  follow=len(Followers.query.filter(Followers.user_id==user_id).all())
+  following=len(Followers.query.filter(Followers.following_id==user_id).all())
+  return author,posts,follow,following
+
 #returns the info about the currnt user
 @app.route('/author',methods=['GET'])
 @auth_required("token")
@@ -30,17 +42,16 @@ def authors():
   user_id=current_user.id
   username=current_user.username
   if request.method == 'GET':
-    author=Users.query.filter(Users.id==user_id).first()
-    posts=len(Posts.query.filter(Posts.author_id==user_id).all())
-    follow=len(Followers.query.filter(Followers.user_id==user_id).all())
-    following=len(Followers.query.filter(Followers.following_id==user_id).all())
+    # author=Users.query.filter(Users.id==user_id).first()
+    author,posts,follow,following=get_auth_details()
+    # posts=len(Posts.query.filter(Posts.author_id==user_id).all())
+    # follow=len(Followers.query.filter(Followers.user_id==user_id).all())
+    # following=len(Followers.query.filter(Followers.following_id==user_id).all())
     # pic = base64.b64encode(Users.profile_pic).decode('utf-8')
     if author==None:
       return jsonify('Author doesn\'t exist ')
     else:
       return jsonify({"Name":author.username,"Author_id":author.id,"Author_Email":author.email,"no_follows":follow,"no_posts":posts,"no_following":following})
-
-
 
 # @app.route('/author/pic',methods=['GET','POST'])
 # @auth_required("token")
@@ -308,7 +319,7 @@ def downloadcsv():
         d1.append(post)
     extension_type = "csv"
     filename = "../data/"+username + "." + extension_type
-    tasks.downloadcsv(d1,filename)
+    tasks.downloadcsv.delay(d1,filename,current_user.email)
     return jsonify("Successfully created CSV")
 
 #----------------------------creates a downloadable PDF report
@@ -337,12 +348,13 @@ def pdf_report():
     data["posts"]=result
     create_pdf(data,username)
     file_name=str("../data/"+username)+".pdf"
-    tasks.pdf(current_user.email,file_name)
+    tasks.pdf.delay(current_user.email,file_name)
     return jsonify("Successfully created PDF")
 
 @app.route('/reminder',methods=['GET'])
 @auth_required("token")
 def rem():
-  res = tasks.daily_rem()
-  return res
+  res = tasks.daily_rem.delay()
+  # job=tasks.hello.delay()
+  return str(res),200
 #----------------------------------------------END OF FILE-----------------------------------------------------------

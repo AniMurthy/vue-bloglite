@@ -3,7 +3,6 @@ from flask import current_app as app
 
 celery = Celery("Application Jobs",broker="redis://localhost:6379/1",backend="redis://localhost:6379")
 
-
 class ContextTask(celery.Task):
     def __call__(self, *args, **kwds):
         with app.app_context():

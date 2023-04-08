@@ -5,10 +5,12 @@ from flask_security import Security, SQLAlchemySessionUserDatastore
 from config import *
 from database import db
 from flask_cors import CORS
+from flask_caching import Cache
 
 
 app= None
 celery = None
+cache = None
 
 
 def create_app():
@@ -21,15 +23,20 @@ def create_app():
   security = Security(app,user_datastore)
   celery = workers.celery
   celery.conf.update(
-    broker_url=app.config["CELERY_BROKER_URL"],
-    result_backend=app.config["CELERY_RESULT_BACKEND"]
+    broker_url = app.config["CELERY_BROKER_URL"],
+    result_backend= app.config["CELERY_RESULT_BACKEND"],
+    timezone = "Asia/Calcutta",
+    enable_utc =False
   )
   celery.Task = workers.ContextTask
   app.app_context().push()
 
-  return app,celery
+  cache=Cache(app)
+  app.app_context().push()
 
-app,celery = create_app()
+  return app,celery,cache
+
+app,celery,cache = create_app()
 CORS(app)
 
 
