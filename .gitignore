@@ -15,7 +15,7 @@ Backend/dump.rdb
 frontend/README.md
 data
 Backend/celerybeat-schedule
-.gitignore
+gitignore
 
 # local env files
 .env.local
