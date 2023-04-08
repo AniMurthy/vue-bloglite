@@ -3,19 +3,11 @@ node_modules
 /dist
 Backend/__pycache__
 project-env
-package-lock.json
-frontend/package.json
-frontend/package-lock.json
-frontend/babel.config.js
-frontend/vue.config.js
-frontend/jsconfig.json
-frontend/README.md
 dump.rdb
 Backend/dump.rdb
-frontend/README.md
 data
 Backend/celerybeat-schedule
-gitignore
+
 
 # local env files
 .env.local
