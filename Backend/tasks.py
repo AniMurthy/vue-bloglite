@@ -37,7 +37,7 @@ def pdf(email,file_name):
 @celery.on_after_configure.connect
 def daily_reminder(sender,**kwargs):
   sender.add_periodic_task(
-        crontab(hour=15, minute=54, day_of_week="*"),
+        crontab(hour=16, minute=20, day_of_week="*"),
         daily_rem.s(),
         name='Daily Reminder'
          )
