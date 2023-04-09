@@ -42,6 +42,14 @@ def daily_reminder(sender,**kwargs):
         name='Daily Reminder'
          )
 
+@celery.on_after_configure.connect
+def mothly_report(sender,**kwargs):
+  sender.add_periodic_task(
+        crontab(0,0, day_of_month='8'),
+        daily_rem.s(),
+        name='Monthly Report'
+         )
+
 @celery.task()
 def daily_rem():
   webhook_url='https://chat.googleapis.com/v1/spaces/AAAAtHhqwFk/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=Wz6d0LY7CZgqPUg-81xOUaIIkihPw5GKScsOiLgOo5E%3D'
